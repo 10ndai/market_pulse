@@ -1,0 +1,95 @@
+AurumFX Pulse: Project Design and Technical Intent
+1. Project Overview and Motivation
+
+This project, titled AurumFX Pulse, is designed as an end-to-end data engineering and analytics system focused on monitoring gold prices and selected foreign exchange pairs. The motivation for this project is to demonstrate the ability to design, build, and reason about a production-style data pipeline that transforms raw financial market data into structured, decision-ready analytics.
+
+Gold (XAU/USD) plays a critical role in global financial markets as a hedge against inflation, currency depreciation, and systemic risk. In emerging and frontier markets, movements in gold prices and major FX pairs often signal broader macroeconomic stress or capital flow dynamics. This project therefore uses gold and FX data as a realistic and economically meaningful domain through which to demonstrate data engineering, statistical transformation, and analytical reasoning skills.
+
+The project is intentionally framed as a professional system rather than a toy example. Emphasis is placed not only on data ingestion and storage, but also on data quality, reproducibility, modular design, and analytical outputs that could plausibly be consumed by analysts, traders, or portfolio managers.
+
+2. Project Objectives
+
+The primary objective of AurumFX Pulse is to design and implement a reliable pipeline that automatically ingests historical market data, stores it in a structured relational database, performs statistical transformations, and produces interpretable market metrics.
+
+Specifically, the project aims to:
+
+Demonstrate the ability to ingest external financial data via APIs in a controlled and reproducible manner
+
+Apply sound data modeling principles using a relational database (PostgreSQL)
+
+Transform raw time-series data into analytically useful features such as returns, volatility, drawdowns, and market regimes
+
+Separate concerns clearly between extraction, loading, transformation, and reporting
+
+Produce outputs that align with how financial insights are communicated in professional environments
+
+A secondary objective is to create documentation that mirrors real-world project lifecycles, including a design-first document followed by an implementation report.
+
+3. Conceptual Architecture
+
+The system follows a layered data pipeline architecture commonly used in analytics engineering and financial data systems.
+
+At the highest level, the pipeline consists of four conceptual layers: data ingestion, data storage, data transformation, and data output. Each layer is implemented as an independent module to ensure clarity, maintainability, and scalability.
+
+Raw market data is first ingested from an external provider and stored without modification. This preserves data lineage and allows reprocessing if transformation logic changes. Cleaned and validated data is then stored in a separate table, ensuring analytical computations are performed on consistent and trustworthy inputs. Finally, derived metrics are computed and stored in a metrics table, which serves as the foundation for reporting and analysis.
+
+This layered approach mirrors production data platforms where raw, refined, and analytics-ready datasets are deliberately separated.
+
+4. Data Sources and Scope
+
+The project uses historical daily OHLC (open, high, low, close) candle data sourced from the Twelve Data API. Twelve Data is selected due to its reliable financial coverage, structured responses, and accessibility for development purposes.
+
+The instruments included in the initial scope are:
+
+XAU/USD (Gold)
+
+EUR/USD
+
+GBP/USD
+
+USD/ZAR
+
+Daily frequency is chosen for the initial implementation to ensure stability, reduce API rate-limit constraints, and align with longer-horizon analytical metrics such as rolling volatility and drawdowns. The system is designed so that higher-frequency data can be incorporated later with minimal architectural changes.
+
+5. Analytical Techniques and Metrics
+
+The analytical layer of AurumFX Pulse focuses on transforming price data into interpretable financial metrics that reflect market behavior and risk.
+
+Daily returns are computed as percentage changes in closing prices, providing a normalized measure of price movement across instruments. Rolling volatility is calculated using a 20-day window of daily returns, serving as a proxy for short-term market risk. Drawdowns are computed relative to historical peaks, capturing downside risk and capital erosion during adverse market conditions.
+
+In addition to quantitative metrics, the system classifies market regimes using the direction of a rolling moving average. Periods are labeled as bullish, bearish, or sideways based on the slope of the trend, providing a simplified but intuitive qualitative interpretation of market conditions.
+
+These techniques are deliberately chosen to balance statistical rigor with interpretability, reflecting the types of metrics commonly used in asset management and macro analysis contexts.
+
+6. Technology Stack and Tooling
+
+The technology stack for AurumFX Pulse is intentionally minimalist but industry-relevant.
+
+Python is used as the primary programming language due to its dominance in data engineering, analytics, and financial computing. Key libraries include pandas for data manipulation, requests for API interaction, and SQLAlchemy for database connectivity.
+
+PostgreSQL is used as the relational database management system, reflecting real-world usage in analytics platforms and financial systems. PostgreSQL provides strong support for time-series data, indexing, and transactional integrity.
+
+The project follows a modular folder structure that separates extraction, loading, transformation, and reporting logic. Environment variables are used to manage secrets such as API keys and database credentials, reinforcing good security and deployment practices.
+
+7. Data Engineering Practices Applied
+
+Several core data engineering principles underpin the project design.
+
+Idempotency is enforced through database constraints and upsert logic, ensuring the pipeline can be rerun without duplicating data. Schema enforcement and type casting are applied during the cleaning phase to prevent silent data corruption. Logging and basic validation checks are incorporated to surface issues early in the pipeline.
+
+The project also emphasizes reproducibility. All transformations are deterministic, database schemas are explicitly defined, and the pipeline can be executed end-to-end from a clean state using documented steps.
+
+While orchestration is implemented manually in the initial version, the pipeline is structured in a way that allows seamless migration to workflow orchestration tools such as Apache Airflow in future iterations.
+
+8. Expected Outcomes
+
+Upon completion, AurumFX Pulse is expected to produce a structured and queryable dataset of gold and FX prices, enriched with derived analytical metrics. The system will generate up-to-date summary reports that highlight current market conditions, volatility, drawdowns, and regime classifications across instruments.
+
+Beyond the technical outputs, the project serves as a demonstration of the ability to reason about data systems holistically—from economic motivation and data sourcing to transformation logic and analytical interpretation.
+
+9. Positioning and Future Extensions
+
+This project is positioned as a foundational analytics platform rather than a one-off script. Future extensions include the addition of higher-frequency data, integration with workflow orchestration tools, deployment on cloud infrastructure, and the development of interactive dashboards for visualization.
+
+The current design document serves as a blueprint against which the final implementation will be evaluated and documented in a subsequent report.
+
